@@ -3,6 +3,7 @@ import {Client, Events, GatewayIntentBits} from "discord.js";
 import config from './config.json' with { type: 'json' };
 const { token } = config;
 import {registerCommands} from "./commands/commandHandler.js";
+import {registerCronJobs} from "./cron/cron.js";
 
 
 // Create a new client instance
@@ -11,9 +12,10 @@ const client = new Client({intents: [GatewayIntentBits.Guilds]});
 // When the client is ready, run this code (only once).
 // The distinction between `client: Client<boolean>` and `readyClient: Client<true>` is important for TypeScript developers.
 // It makes some properties non-nullable.
-client.once(Events.ClientReady, readyClient => {
+client.once(Events.ClientReady, client => {
     registerCommands(client);
-    console.log(`Ready! Logged in as ${readyClient.user.tag}`);
+    registerCronJobs(client);
+    console.log(`Ready! Logged in as ${client.user.tag}`);
 });
 
 client.on(Events.InteractionCreate, async interaction => {
